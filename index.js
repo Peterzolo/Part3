@@ -73,15 +73,24 @@ app.delete("/api/persons/delete/:id", (request, response) => {
 app.post("/api/persons", (req, res) => {
   const id = Math.floor(Math.random() * 1000000);
 
-  const newPerson = {
-    id: id,
-    name: req.body.name,
-    number: req.body.number,
-  };
+  if (req.body.name === "" || req.body.number === "") {
+    return res.status(404).send("You have to enter your details");
+  }
 
-  persons = persons.concat(newPerson);
+  const person = persons.find((person) => person.name === req.body.name);
+  if (person) {
+    res.status(409).send("This name has already been added");
+  } else {
+    const newPerson = {
+      id: id,
+      name: req.body.name,
+      number: req.body.number,
+    };
 
-  res.json(newPerson);
+    persons = persons.concat(newPerson);
+
+    res.json(newPerson);
+  }
 });
 
 const PORT = 5000;
