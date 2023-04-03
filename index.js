@@ -70,6 +70,20 @@ app.delete("/api/persons/delete/:id", (request, response) => {
   }
 });
 
+app.post("/api/persons", (req, res) => {
+  const id = Math.floor(Math.random() * 1000000);
+
+  const newPerson = {
+    id: id,
+    name: req.body.name,
+    number: req.body.number,
+  };
+
+  persons = persons.concat(newPerson);
+
+  res.json(newPerson);
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
