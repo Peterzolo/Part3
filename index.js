@@ -24,8 +24,6 @@ let persons = [
   },
 ];
 
-console.log("NEW PERSONS", persons);
-
 app.use(express.json());
 
 app.get("/api/persons", (request, response) => {
@@ -53,16 +51,13 @@ app.get("/info", (request, response) => {
 
 app.get("/api/persons/:id", (request, response) => {
   const id = Number(request.params.id);
-  const person = persons.find((note) => note.id === id);
-  console.log("PERSON", person);
+  const person = persons.find((person) => person.id === id);
 
   if (person) {
     response.json(person);
   } else {
     response.status(404).end();
   }
-
-  response.json(person);
 });
 
 const PORT = 5000;
