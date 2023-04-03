@@ -45,13 +45,24 @@ app.get("/info", (request, response) => {
   const responseDate = ` ${dayOfWeek}, ${month} ${dayOfMonth}, ${year} at ${time} (${timezone})`;
   const infoCount = `The phonebook has info for ${newPersons.length} people`;
 
-  console.log(responseDate);
-  console.log(infoCount);
-
   response.status(200).send({
     infoCount,
     responseDate,
   });
+});
+
+app.get("/api/persons/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const person = persons.find((note) => note.id === id);
+  console.log("PERSON", person);
+
+  if (person) {
+    response.json(person);
+  } else {
+    response.status(404).end();
+  }
+
+  response.json(person);
 });
 
 const PORT = 5000;
