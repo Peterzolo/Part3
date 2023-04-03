@@ -24,11 +24,34 @@ let persons = [
   },
 ];
 
+console.log("NEW PERSONS", persons);
+
 app.use(express.json());
 
 app.get("/api/persons", (request, response) => {
   response.json(persons);
-  console.log("PERSONS", persons);
+});
+
+app.get("/info", (request, response) => {
+  const newPersons = persons;
+  const now = new Date();
+  const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
+  const month = now.toLocaleString("en-US", { month: "long" });
+  const dayOfMonth = now.toLocaleString("en-US", { day: "numeric" });
+  const year = now.getFullYear();
+  const time = now.toLocaleTimeString("en-US", { hour12: false });
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+  const responseDate = ` ${dayOfWeek}, ${month} ${dayOfMonth}, ${year} at ${time} (${timezone})`;
+  const infoCount = `The phonebook has info for ${newPersons.length} people`;
+
+  console.log(responseDate);
+  console.log(infoCount);
+
+  response.status(200).send({
+    infoCount,
+    responseDate,
+  });
 });
 
 const PORT = 5000;
