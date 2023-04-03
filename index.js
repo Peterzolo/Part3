@@ -60,6 +60,16 @@ app.get("/api/persons/:id", (request, response) => {
   }
 });
 
+app.delete("/api/persons/delete/:id", (request, response) => {
+  const id = Number(request.params.id);
+  const person = persons.filter((person) => person.id !== id);
+  if (person) {
+    response.json("Delete was successful");
+  } else {
+    response.status(404).end("Could not delete");
+  }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
