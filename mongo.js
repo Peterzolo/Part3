@@ -17,14 +17,14 @@ const personSchema = new mongoose.Schema({
   number: Number,
 });
 
-const Note = mongoose.model("person", personSchema);
+const Person = mongoose.model("person", personSchema);
 
-const note = new Note({
-  name: "Jame Paul",
-  number: 123456,
+const person = new Person({
+  name: "Steve magnus",
+  number: 1033456,
 });
 
-note.save().then((result) => {
-  console.log("person saved!");
+person.save().then((result) => {
+  console.log("person saved!", result);
   mongoose.connection.close();
 });
