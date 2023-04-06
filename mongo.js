@@ -7,7 +7,7 @@ if (process.argv.length < 3) {
 
 const password = process.argv[2];
 
-const url = `mongodb+srv://peterzolo:${password}@helsinki.pv1yf1c.mongodb.net/?retryWrites=true&w=majority`;
+const url = process.env.MONGODB_URI;
 
 mongoose.set("strictQuery", false);
 mongoose.connect(url);
@@ -28,3 +28,10 @@ person.save().then((result) => {
   console.log("person saved!", result);
   mongoose.connection.close();
 });
+
+Person.find({})
+  .then((result) => {
+    console.log(result);
+    mongoose.connection.close();
+  })
+  .catch((error) => error);
