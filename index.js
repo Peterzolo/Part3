@@ -1,8 +1,8 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-
 require("dotenv").config();
+const Person = require("./models/person");
 
 const app = express();
 
@@ -28,17 +28,6 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
-
-if (process.argv.length < 3) {
-  console.log("give password as argument");
-  process.exit(1);
-}
-
-const password = process.argv[2];
-const url = `mongodb+srv://peterzolo:${password}@helsinki.pv1yf1c.mongodb.net/?retryWrites=true&w=majority`;
-
-mongoose.set("strictQuery", false);
-mongoose.connect(url);
 
 app.use(express.static("build"));
 app.use(cors());

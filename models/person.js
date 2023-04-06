@@ -18,7 +18,7 @@ const PersonSchema = new mongoose.Schema({
   number: Number,
 });
 
-noteSchema.set("toJSON", {
+PersonSchema.set("toJSON", {
   transform: (document, returnedObject) => {
     returnedObject.id = returnedObject._id.toString();
     delete returnedObject._id;
@@ -26,4 +26,6 @@ noteSchema.set("toJSON", {
   },
 });
 
-module.exports = mongoose.model("person", PersonSchema);
+const Person = mongoose.model("person", PersonSchema);
+
+module.exports = Person;
