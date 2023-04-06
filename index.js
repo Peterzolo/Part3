@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -29,7 +30,10 @@ let persons = [
   },
 ];
 
+app.use(express.static("build"));
 app.use(cors());
+
+// app.use('/static', express.static(path.join(__dirname, 'public'));
 
 morgan.token("body", (req) => JSON.stringify(req.body));
 app.use(
