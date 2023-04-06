@@ -1,7 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
-const path = require("path");
 
 require("dotenv").config();
 
@@ -30,10 +29,19 @@ let persons = [
   },
 ];
 
+if (process.argv.length < 3) {
+  console.log("give password as argument");
+  process.exit(1);
+}
+
+const password = process.argv[2];
+const url = `mongodb+srv://peterzolo:${password}@helsinki.pv1yf1c.mongodb.net/?retryWrites=true&w=majority`;
+
+mongoose.set("strictQuery", false);
+mongoose.connect(url);
+
 app.use(express.static("build"));
 app.use(cors());
-
-// app.use('/static', express.static(path.join(__dirname, 'public'));
 
 morgan.token("body", (req) => JSON.stringify(req.body));
 app.use(
@@ -46,10 +54,6 @@ app.use(express.json());
 app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
-
-// app.get("/", (request, response) => {
-//   response.send({ Hello: "Hello Persons" });
-// });
 
 app.get("/info", (request, response) => {
   const newPersons = persons;
