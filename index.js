@@ -1,4 +1,6 @@
 const express = require("express");
+const morgan = require("morgan");
+
 const app = express();
 
 let persons = [
@@ -24,8 +26,14 @@ let persons = [
   },
 ];
 
-app.use(express.json());
+morgan.token("body", (req) => JSON.stringify(req.body));
+app.use(
+  morgan(
+    ":url :method :res[content-length] - :response-time ms :date[web] :body"
+  )
+);
 
+app.use(express.json());
 app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
@@ -79,7 +87,7 @@ app.post("/api/persons", (req, res) => {
 
   const person = persons.find((person) => person.name === req.body.name);
   if (person) {
-    res.status(409).send("This name has already been added");
+    res.status(409).send("Enter a unique name");
   } else {
     const newPerson = {
       id: id,
@@ -94,6 +102,7 @@ app.post("/api/persons", (req, res) => {
 });
 
 const PORT = 5000;
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
