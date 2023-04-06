@@ -43,6 +43,10 @@ app.get("/api/persons", (request, response) => {
   response.json(persons);
 });
 
+app.get("/", (request, response) => {
+  response.send({ Hello: "Hello Persons" });
+});
+
 app.get("/info", (request, response) => {
   const newPersons = persons;
   const now = new Date();
