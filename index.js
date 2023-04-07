@@ -39,28 +39,38 @@ app.use(
   )
 );
 
-app.use(express.json());
-app.get("/api/persons", (request, response) => {
-  response.json(persons);
-});
+// app.use(express.json());
+// app.get("/api/persons", (request, response) => {
+//   response.json(persons);
+// });
 
-app.get("/info", (request, response) => {
-  const newPersons = persons;
-  const now = new Date();
-  const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
-  const month = now.toLocaleString("en-US", { month: "long" });
-  const dayOfMonth = now.toLocaleString("en-US", { day: "numeric" });
-  const year = now.getFullYear();
-  const time = now.toLocaleTimeString("en-US", { hour12: false });
-  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+app.get("/api/persons", (req, res) => {
+  Person.find({})
+    .then((persons) => {
+      if (persons) {
+        const now = new Date();
+        const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
+        const month = now.toLocaleString("en-US", { month: "long" });
+        const dayOfMonth = now.toLocaleString("en-US", { day: "numeric" });
+        const year = now.getFullYear();
+        const time = now.toLocaleTimeString("en-US", { hour12: false });
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-  const responseDate = ` ${dayOfWeek}, ${month} ${dayOfMonth}, ${year} at ${time} (${timezone})`;
-  const infoCount = `The phonebook has info for ${newPersons.length} people`;
+        const responseDate = ` ${dayOfWeek}, ${month} ${dayOfMonth}, ${year} at ${time} (${timezone})`;
+        const infoCount = `The phonebook has info for ${persons.length} people`;
 
-  response.status(200).send({
-    infoCount,
-    responseDate,
-  });
+        res.status(200).send({
+          infoCount,
+          responseDate,
+          result: persons,
+        });
+      } else {
+        res.status(400).send("No data found");
+      }
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
 });
 
 app.get("/api/persons/:id", (request, response) => {
