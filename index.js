@@ -112,8 +112,17 @@ app.post("/api/persons", (req, res) => {
       });
     })
     .catch((error) => {
-      res.status(500).send(error);
+      res.status(500).send(error.message);
     });
+});
+
+app.delete("/api/persons/:id", (req, res, next) => {
+  const id = req.params.id;
+  Person.findByIdAndRemove(id)
+    .then((result) => {
+      res.status(204).send("Data deleted");
+    })
+    .catch((error) => next(error));
 });
 
 const PORT = process.env.PORT || 5000;
