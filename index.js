@@ -28,8 +28,8 @@ let persons = [
     number: "39-23-6423122",
   },
 ];
-
 app.use(express.static("build"));
+app.use(express.json());
 app.use(cors());
 
 morgan.token("body", (req) => JSON.stringify(req.body));
@@ -38,11 +38,6 @@ app.use(
     ":url :method :res[content-length] - :response-time ms :date[web] :body"
   )
 );
-
-// app.use(express.json());
-// app.get("/api/persons", (request, response) => {
-//   response.json(persons);
-// });
 
 app.get("/api/persons", (req, res) => {
   Person.find({})
@@ -95,26 +90,30 @@ app.delete("/api/persons/delete/:id", (request, response) => {
 });
 
 app.post("/api/persons", (req, res) => {
-  const id = Math.floor(Math.random() * 1000000);
+  const body = req.body;
 
-  if (req.body.name === "" || req.body.number === "") {
-    return res.status(404).send("You have to enter your details");
+  if (!body.name) {
+    return res.status(404).send({ error: "name or phone is missing" });
+  }
+  if (!body.phone) {
+    return res.status(404).send({ error: "name or phone is missing" });
   }
 
-  const person = persons.find((person) => person.name === req.body.name);
-  if (person) {
-    res.status(409).send("Enter a unique name");
-  } else {
-    const newPerson = {
-      id: id,
-      name: req.body.name,
-      number: req.body.number,
-    };
+  const newUsewr = new Person({
+    name: body.name,
+    phone: body.phone,
+  });
 
-    persons = persons.concat(newPerson);
-
-    res.json(newPerson);
-  }
+  newUsewr
+    .save()
+    .then((response) => {
+      res.status(200).send({
+        result: response,
+      });
+    })
+    .catch((error) => {
+      res.status(500).send(error);
+    });
 });
 
 const PORT = process.env.PORT || 5000;

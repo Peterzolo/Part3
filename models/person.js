@@ -15,7 +15,7 @@ mongoose
 
 const PersonSchema = new mongoose.Schema({
   name: String,
-  number: Number,
+  phone: Number,
 });
 
 PersonSchema.set("toJSON", {
