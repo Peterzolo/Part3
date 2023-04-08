@@ -199,6 +199,10 @@ app.put("/api/persons/:id", (req, res) => {
       res.status(500).json({ message: "Error fetching user", error });
     });
 });
+app.get("/", function (req, res) {
+  res.setHeader("Content-Type", "application/javascript");
+  // rest of your code to serve the JavaScript file
+});
 
 const errorHandler = (error, request, response, next) => {
   console.error(error.message);
