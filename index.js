@@ -54,49 +54,72 @@ app.get("/api/persons", (req, res) => {
         const responseDate = ` ${dayOfWeek}, ${month} ${dayOfMonth}, ${year} at ${time} (${timezone})`;
         const infoCount = `The phonebook has info for ${persons.length} people`;
 
-        res.status(200).send({
+        res.status(200).json({
           infoCount,
           responseDate,
           result: persons,
         });
       } else {
-        res.status(400).send("No data found");
+        res.status(400).json("No data found");
       }
     })
     .catch((error) => {
-      res.status(500).send(error);
+      res.status(500).json(error);
     });
 });
 
-app.get("/api/persons/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.find((person) => person.id === id);
-
-  if (person) {
-    response.json(person);
-  } else {
-    response.status(404).end();
-  }
+app.get("/api/persons/:id", (req, res) => {
+  const id = req.params.id;
+  const person = Person.findById(id)
+    .then((response) => {
+      if (!person) {
+        return res.status(400).json("No data found");
+      }
+      console.log("SINGLE PERSON", response);
+      res.status(200).json({ result: response });
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 });
 
-app.delete("/api/persons/delete/:id", (request, response) => {
-  const id = Number(request.params.id);
-  const person = persons.filter((person) => person.id !== id);
-  if (person) {
-    response.json("Delete was successful");
-  } else {
-    response.status(404).end("Could not delete");
-  }
+app.get("/info", (req, res) => {
+  Person.find({})
+    .then((persons) => {
+      if (persons) {
+        const now = new Date();
+        const dayOfWeek = now.toLocaleString("en-US", { weekday: "long" });
+        const month = now.toLocaleString("en-US", { month: "long" });
+        const dayOfMonth = now.toLocaleString("en-US", { day: "numeric" });
+        const year = now.getFullYear();
+        const time = now.toLocaleTimeString("en-US", { hour12: false });
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+        const responseDate = ` ${dayOfWeek}, ${month} ${dayOfMonth}, ${year} at ${time} (${timezone})`;
+        const infoCount = `The phonebook has info for ${persons.length} people`;
+
+        res.status(200).json({
+          infoCount,
+          responseDate,
+          result: persons,
+        });
+      } else {
+        res.status(400).json("No data found");
+      }
+    })
+    .catch((error) => {
+      res.status(500).json(error);
+    });
 });
 
 app.post("/api/persons", (req, res) => {
   const body = req.body;
 
   if (!body.name) {
-    return res.status(404).send({ error: "name or phone is missing" });
+    return res.status(404).json({ error: "name or phone is missing" });
   }
   if (!body.phone) {
-    return res.status(404).send({ error: "name or phone is missing" });
+    return res.status(404).json({ error: "name or phone is missing" });
   }
 
   const newUsewr = new Person({
@@ -107,29 +130,77 @@ app.post("/api/persons", (req, res) => {
   newUsewr
     .save()
     .then((response) => {
-      res.status(200).send({
+      res.status(200).json({
         result: response,
       });
     })
     .catch((error) => {
-      res.status(500).send(error.message);
+      res.status(500).json(error.message);
     });
 });
 
-app.delete("/api/persons/:id", (req, res, next) => {
+app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
   Person.findByIdAndRemove(id)
     .then((result) => {
-      res.status(204).send("Data deleted");
+      res.status(204).json("Data deleted");
     })
-    .catch((error) => next(error));
+    .catch((error) => error);
+});
+
+app.get("/api/persons/:id", (req, res) => {
+  const userId = req.params.id;
+  Person.findById(userId)
+    .then((user) => {
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json(user);
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "Error fetching user", error });
+    });
+});
+
+app.put("/api/persons/:id", (req, res) => {
+  const userId = req.params.id;
+
+  Person.findById(userId)
+    .then((user) => {
+      const updatePhoneOnly = {
+        name: user.name,
+        phone: req.body.phone,
+      };
+
+      const updateFullDetail = {
+        name: req.body.name,
+        phone: req.body.phone,
+      };
+      if (user.name === req.body.name) {
+        Person.findByIdAndUpdate(userId, updatePhoneOnly, {
+          new: true,
+        }).then((result) => {
+          res.status(200).json({ message: "Phone Number updated", result });
+        });
+      } else {
+        Person.findByIdAndUpdate(userId, updateFullDetail, {
+          new: true,
+        }).then((result) => {
+          res.status(200).json({ message: "User updated", result });
+        });
+      }
+    })
+    .catch((error) => {
+      res.status(500).json({ message: "Error fetching user", error });
+    });
 });
 
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+    return response.status(400).json({ error: "malformatted id" });
   }
 
   next(error);
