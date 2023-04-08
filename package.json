@@ -9,7 +9,8 @@
     "dev": "nodemon index.js",
     "build:ui": "rm -rf build && cd ../frontend && npm run build && cp -r build ../backend",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && git push",
-    "mongo": "node mongo.js producer"
+    "mongo": "node mongo.js producer",
+    "lint": "eslint . --fix"
   },
   "author": "Peter Solomon",
   "license": "ISC",
@@ -20,5 +21,8 @@
     "mime": "^3.0.0",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.38.0"
   }
 }

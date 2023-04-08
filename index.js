@@ -3,12 +3,10 @@ const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
 const Person = require("./models/person");
-const path = require("path");
-
-const { getType } = require("mime");
 
 const app = express();
 
+// eslint-disable-next-line no-unused-vars
 let persons = [
   {
     id: 1,
@@ -32,15 +30,7 @@ let persons = [
   },
 ];
 
-// app.use(express.static("build"));
-
-app.use(
-  express.static("build", {
-    setHeaders: (res, filePath) => {
-      res.setHeader("X-Content-Type-Options", "nosniff");
-    },
-  })
-);
+app.use(express.static("build"));
 
 app.use(express.json());
 app.use(cors());
@@ -155,7 +145,7 @@ app.post("/api/persons", (req, res) => {
 app.delete("/api/persons/:id", (req, res) => {
   const id = req.params.id;
   Person.findByIdAndRemove(id)
-    .then((result) => {
+    .then(() => {
       res.status(204).json("Data deleted");
     })
     .catch((error) => error);
