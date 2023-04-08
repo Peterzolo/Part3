@@ -4,7 +4,8 @@ const cors = require("cors");
 require("dotenv").config();
 const Person = require("./models/person");
 const path = require("path");
-const mime = require("mime");
+
+const { getType } = require("mime");
 
 const app = express();
 
@@ -36,7 +37,7 @@ let persons = [
 app.use(
   express.static("build", {
     setHeaders: (res, filePath) => {
-      res.setHeader("Content-Type", mime.getType(path.extname(filePath)));
+      res.setHeader("Content-Type", getType(path.extname(filePath)));
     },
   })
 );
