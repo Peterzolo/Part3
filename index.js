@@ -2,6 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
+// const path = require("path");
 const Person = require("./models/person");
 
 const app = express();
@@ -30,7 +31,16 @@ let persons = [
   },
 ];
 
-app.use(express.static("build"));
+app.use(
+  express.static("build", {
+    setHeaders: (res) => {
+      res.set("Content-Type", "application/javascript");
+    },
+  })
+);
+
+// app.use(express.static("build"));
+app.use(express.static(__dirname + "/public"));
 
 app.use(express.json());
 app.use(cors());
