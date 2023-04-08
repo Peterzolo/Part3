@@ -180,12 +180,16 @@ app.put("/api/persons/:id", (req, res) => {
       if (user.name === req.body.name) {
         Person.findByIdAndUpdate(userId, updatePhoneOnly, {
           new: true,
+          runValidators: true,
+          context: "query",
         }).then((result) => {
           res.status(200).json({ message: "Phone Number updated", result });
         });
       } else {
         Person.findByIdAndUpdate(userId, updateFullDetail, {
           new: true,
+          runValidators: true,
+          context: "query",
         }).then((result) => {
           res.status(200).json({ message: "User updated", result });
         });
@@ -196,11 +200,13 @@ app.put("/api/persons/:id", (req, res) => {
     });
 });
 
-const errorHandler = (error, req, res, next) => {
+const errorHandler = (error, request, response, next) => {
   console.error(error.message);
 
   if (error.name === "CastError") {
-    return response.status(400).json({ error: "malformatted id" });
+    return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
