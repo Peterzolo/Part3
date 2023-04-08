@@ -2,7 +2,6 @@ const express = require("express");
 const morgan = require("morgan");
 const cors = require("cors");
 require("dotenv").config();
-const path = require("path");
 const Person = require("./models/person");
 
 const app = express();
@@ -31,24 +30,7 @@ let persons = [
   },
 ];
 
-app.use(express.static(path.join(__dirname, "build")));
-
-app.get("/", function (req, res) {
-  // res.sendFile(path.join(__dirname, "build", "index.html"));
-  res.sendFile(
-    path.join(__dirname, "build", "Content-Type", "application/javascript")
-  );
-});
-
-// app.use(
-//   express.static("build", {
-//     setHeaders: (res) => {
-//       res.set("Content-Type", "application/javascript");
-//     },
-//   })
-// );
-
-// app.use(express.static("build"));
+app.use(express.static("build"));
 app.use(express.static(__dirname + "/public"));
 
 app.use(express.json());
@@ -220,10 +202,6 @@ app.put("/api/persons/:id", (req, res) => {
     .catch((error) => {
       res.status(500).json({ message: "Error fetching user", error });
     });
-});
-app.get("/", function (req, res) {
-  res.setHeader("Content-Type", "application/javascript");
-  // rest of your code to serve the JavaScript file
 });
 
 const errorHandler = (error, request, response, next) => {
