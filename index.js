@@ -36,7 +36,9 @@ let persons = [
 
 app.use(
   express.static("build", {
-    mimeTypes: {},
+    setHeaders: (res, filePath) => {
+      res.setHeader("X-Content-Type-Options", "nosniff");
+    },
   })
 );
 
