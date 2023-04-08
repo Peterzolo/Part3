@@ -36,9 +36,7 @@ let persons = [
 
 app.use(
   express.static("build", {
-    setHeaders: (res, filePath) => {
-      res.setHeader("Content-Type", getType(path.extname(filePath)));
-    },
+    mimeTypes: {},
   })
 );
 
