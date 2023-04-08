@@ -27,7 +27,7 @@ const PersonSchema = new mongoose.Schema({
       validator: function (v) {
         return phoneRegex.test(v);
       },
-      message: "Please enter a valid phone number!",
+      message: "Please make sure the number is  valid phone number",
     },
   },
 });

@@ -135,7 +135,7 @@ app.post("/api/persons", (req, res) => {
       });
     })
     .catch((error) => {
-      res.status(500).json(error.message);
+      res.status(400).json(error.message);
     });
 });
 
