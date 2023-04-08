@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const phoneRegex = /^(\+\d{1,3}[- ]?)?\d{10}$/;
 
 mongoose.set("strictQuery", false);
 
@@ -16,14 +17,18 @@ mongoose
 const PersonSchema = new mongoose.Schema({
   name: {
     type: String,
-    minLength: 5,
+    minLength: 3,
     required: true,
   },
   phone: {
     type: String,
-    minLength: 11,
-    maxLength: 11,
     required: true,
+    validate: {
+      validator: function (v) {
+        return phoneRegex.test(v);
+      },
+      message: "Please enter a valid phone number!",
+    },
   },
 });
 
